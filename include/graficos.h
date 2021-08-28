@@ -32,6 +32,8 @@ byte PosMenu = 1;
 bool submenu1 = false;
 bool submenu2 = false;
 bool submenu3 = false;
+bool submenu4 = false;
+bool submenu5 = false;
 
 //Prototipo
 void EntradaMenuConfig();
@@ -77,19 +79,19 @@ void menuInicial()
 
     display.drawBitmap(2, 29, diapa, 20, 20, 1);
     display.setCursor(32, 34);
-    display.println(noteNames[0]);
+    display.println(noteNames[noteSelect]);
 
     display.drawBitmap(68, 28, midi, 20, 20, 1);
     display.setCursor(98, 34);
-    display.println(1);
+    display.println(MIDI_CH);
 
     display.setCursor(0, 55);
     display.print("OCT:");
-    display.println(octave[2]);
+    display.println(octavas[OctSel]);
 
     display.setCursor(62, 55);
     display.print("MODE:");
-    display.println(mode[0]);
+    display.println(mode[ModeSel]);
 
     display.display();
 }
@@ -178,6 +180,7 @@ void MenuConfig()
                 //Contador de numero de escalas en el encoder
                 while (submenu1)
                 {
+                    //Ajuste de los valores del cursor
                     if (posicion >= 5)
                     {
                         posicion = 1;
@@ -187,6 +190,7 @@ void MenuConfig()
                         posicion = 4;
                     }
                     ////////////////////////////
+
                     //Pintar Escalas en pantalla
                     if (posicion == 1)
                     {
@@ -308,9 +312,10 @@ void MenuConfig()
             posicion = 1; //Coloca el cursor en la primera posicion
             break;
         }
+        /////////////  FIN ESCALAS ////////////
 
         /////////////////////////////////////////
-        //Posicion 2
+        //Posicion 2 MIDI
         if (posicion == 2)
         {
             display.drawRoundRect(0, 4, 26, 22, 1, BLACK);
@@ -321,12 +326,78 @@ void MenuConfig()
             display.drawRoundRect(90, 35, 26, 22, 1, BLACK);
             display.display();
 
-            //Serial.println(posicion);
+            //comprueba el botón
+            BtnEnc.update();
 
-            PosMenu = 2;
+            //Vuelve al menu Ajustes
+            if (BtnEnc.isLongClick())
+            {
+                EstadoMenu = false;
+                submenu1 = false;
+                menuInicial();
+                break;
+            }
+
+            //Entrada selector canal MIDI
+            if (BtnEnc.isSingleClick())
+            {
+                display.clearDisplay();
+                display.setTextSize(1);
+                display.setTextColor(WHITE);
+                display.setCursor(38, 0);
+                display.println("CANAL MIDI");
+                display.drawLine(2, 8, 124, 8, 1);
+                display.display();
+
+                submenu2 = true;
+                posicion = 1;
+
+                while (submenu2)
+                {
+                    if (posicion >= 128)
+                    {
+                        posicion = 1;
+                    }
+                    if (posicion <= 0)
+                    {
+                        posicion = 127;
+                    }
+                    display.setTextSize(2);
+                    display.fillRect(20, 20, 90, 40, BLACK);
+                    display.setCursor(50, 30);
+                    display.print(posicion);
+                    display.display();
+
+                    BtnEnc.update();
+
+                    //Salir sin seleccionar
+                    if (BtnEnc.isLongClick())
+                    {
+                        EstadoMenu = false;
+                        submenu2 = false;
+                        menuInicial();
+                        break;
+                    }
+                    //Seleccionar el canal MIDI
+                    if (BtnEnc.isSingleClick())
+                    {
+                        submenu2 = false;
+                        EstadoMenu = false;
+                        MIDI_CH = posicion;
+                        menuInicial();
+                        break;
+                    }
+                }
+            }
         }
+        if (submenu2 == false && EstadoMenu == false)
+        {
+            posicion = 1;
+            break;
+        }
+        ///////////////////FIN MIDI  //////////////////
 
-        //posicion 3
+        //posicion 3 OCTAVA
         if (posicion == 3)
         {
             display.drawRoundRect(0, 4, 26, 22, 1, BLACK);
@@ -336,10 +407,192 @@ void MenuConfig()
             display.drawRoundRect(45, 35, 26, 22, 1, BLACK);
             display.drawRoundRect(90, 35, 26, 22, 1, BLACK);
             display.display();
-            //Serial.println(posicion);
 
-            PosMenu = 3;
+            BtnEnc.update();
+
+            //Vuelve al menu Ajustes
+            if (BtnEnc.isLongClick())
+            {
+                EstadoMenu = false;
+                submenu3 = false;
+                menuInicial();
+                break;
+            }
+
+            //Entrada selector OCTAVA
+            if (BtnEnc.isSingleClick())
+            {
+                display.clearDisplay();
+                display.setTextSize(1);
+                display.setTextColor(WHITE);
+                display.setCursor(38, 0);
+                display.println("OCTAVA");
+                display.drawLine(2, 8, 124, 8, 1);
+                display.display();
+
+                submenu3 = true;
+                posicion = 3;
+
+                while (submenu3)
+                {
+                    if (posicion >= 6)
+                    {
+                        posicion = 1;
+                    }
+                    if (posicion <= 0)
+                    {
+                        posicion = 5;
+                    }
+
+                    if (posicion == 1)
+                    {
+                        display.fillRect(30, 30, 75, 20, BLACK);
+                        display.setTextSize(2);
+                        display.setTextColor(WHITE);
+                        display.setCursor(50, 32);
+                        display.print(octave[0]);
+                        display.display();
+
+                        BtnEnc.update();
+
+                        if (BtnEnc.isLongClick())
+                        {
+                            EstadoMenu = false;
+                            submenu3 = false;
+                            menuInicial();
+                            break;
+                        }
+
+                        if (BtnEnc.isSingleClick())
+                        {
+                            EstadoMenu = false;
+                            submenu3 = false;
+                            OctSel = posicion - 1;
+                            menuInicial();
+                            break;
+                        }
+                    }
+                    if (posicion == 2)
+                    {
+                        display.fillRect(30, 30, 75, 20, BLACK);
+                        display.setTextSize(2);
+                        display.setTextColor(WHITE);
+                        display.setCursor(50, 32);
+                        display.print(octave[1]);
+                        display.display();
+
+                        BtnEnc.update();
+
+                        if (BtnEnc.isLongClick())
+                        {
+                            EstadoMenu = false;
+                            submenu3 = false;
+                            menuInicial();
+                            break;
+                        }
+
+                        if (BtnEnc.isSingleClick())
+                        {
+                            EstadoMenu = false;
+                            submenu3 = false;
+                            OctSel = posicion - 1;
+                            menuInicial();
+                            break;
+                        }
+                    }
+                    if (posicion == 3)
+                    {
+                        display.fillRect(30, 30, 75, 20, BLACK);
+                        display.setTextSize(2);
+                        display.setTextColor(WHITE);
+                        display.setCursor(50, 32);
+                        display.print(octave[2]);
+                        display.display();
+
+                        BtnEnc.update();
+
+                        if (BtnEnc.isLongClick())
+                        {
+                            EstadoMenu = false;
+                            submenu3 = false;
+                            menuInicial();
+                            break;
+                        }
+
+                        if (BtnEnc.isSingleClick())
+                        {
+                            EstadoMenu = false;
+                            submenu3 = false;
+                            OctSel = posicion - 1;
+                            menuInicial();
+                            break;
+                        }
+                    }
+                    if (posicion == 4)
+                    {
+                        display.fillRect(30, 30, 75, 20, BLACK);
+                        display.setTextSize(2);
+                        display.setTextColor(WHITE);
+                        display.setCursor(50, 32);
+                        display.print(octave[3]);
+                        display.display();
+
+                        BtnEnc.update();
+
+                        if (BtnEnc.isLongClick())
+                        {
+                            EstadoMenu = false;
+                            submenu3 = false;
+                            menuInicial();
+                            break;
+                        }
+
+                        if (BtnEnc.isSingleClick())
+                        {
+                            EstadoMenu = false;
+                            submenu3 = false;
+                            OctSel = posicion - 1;
+                            menuInicial();
+                            break;
+                        }
+                    }
+                    if (posicion == 5)
+                    {
+                        display.fillRect(30, 30, 75, 200, BLACK);
+                        display.setTextSize(2);
+                        display.setTextColor(WHITE);
+                        display.setCursor(50, 32);
+                        display.print(octave[4]);
+                        display.display();
+
+                        BtnEnc.update();
+
+                        if (BtnEnc.isLongClick())
+                        {
+                            EstadoMenu = false;
+                            submenu3 = false;
+                            menuInicial();
+                            break;
+                        }
+
+                        if (BtnEnc.isSingleClick())
+                        {
+                            EstadoMenu = false;
+                            submenu3 = false;
+                            OctSel = posicion - 1;
+                            menuInicial();
+                            break;
+                        }
+                    }
+                }
+            }
         }
+        if (submenu3 == false && EstadoMenu == false)
+        {
+            posicion = 1;
+            break;
+        }
+        /////////////////// FIN OCTAVA ///////////////
 
         //posicion 4
         if (posicion == 4)
@@ -352,12 +605,390 @@ void MenuConfig()
             display.drawRoundRect(90, 35, 26, 22, 1, BLACK);
             display.display();
 
-            //Serial.println(posicion);
+            //comprueba el botón
+            BtnEnc.update();
 
-            PosMenu = 4;
+            //Vuelve al menu Ajustes
+            if (BtnEnc.isLongClick())
+            {
+                EstadoMenu = false;
+                submenu4 = false;
+                menuInicial();
+                break;
+            }
+
+            //Entrada selector Tonalidad
+            if (BtnEnc.isSingleClick())
+            {
+                display.clearDisplay();
+                display.setTextSize(1);
+                display.setTextColor(WHITE);
+                display.setCursor(38, 0);
+                display.println("TONALIDAD");
+                display.drawLine(2, 8, 124, 8, 1);
+                display.display();
+
+                submenu4 = true;
+                posicion = 1;
+            }
+
+            while (submenu4)
+            {
+                if (posicion >= 13)
+                {
+                    posicion = 1;
+                }
+                if (posicion <= 0)
+                {
+                    posicion = 12;
+                }
+
+                if (posicion == 1)
+                {
+                    display.fillRect(30, 30, 75, 20, BLACK);
+                    display.setTextSize(2);
+                    display.setTextColor(WHITE);
+                    display.setCursor(50, 32);
+                    display.print(noteNames[0]);
+                    display.display();
+
+                    BtnEnc.update();
+
+                    if (BtnEnc.isLongClick())
+                    {
+                        EstadoMenu = false;
+                        submenu4 = false;
+                        menuInicial();
+                        break;
+                    }
+
+                    if (BtnEnc.isSingleClick())
+                    {
+                        EstadoMenu = false;
+                        submenu4 = false;
+                        noteSelect = posicion - 1;
+                        menuInicial();
+                        break;
+                    }
+                }
+                if (posicion == 2)
+                {
+                    display.fillRect(30, 30, 75, 20, BLACK);
+                    display.setTextSize(2);
+                    display.setTextColor(WHITE);
+                    display.setCursor(50, 32);
+                    display.print(noteNames[1]);
+                    display.display();
+
+                    BtnEnc.update();
+
+                    if (BtnEnc.isLongClick())
+                    {
+                        EstadoMenu = false;
+                        submenu4 = false;
+                        menuInicial();
+                        break;
+                    }
+
+                    if (BtnEnc.isSingleClick())
+                    {
+                        EstadoMenu = false;
+                        submenu4 = false;
+                        noteSelect = posicion - 1;
+                        menuInicial();
+                        break;
+                    }
+                }
+                if (posicion == 3)
+                {
+                    display.fillRect(30, 30, 75, 20, BLACK);
+                    display.setTextSize(2);
+                    display.setTextColor(WHITE);
+                    display.setCursor(50, 32);
+                    display.print(noteNames[2]);
+                    display.display();
+
+                    BtnEnc.update();
+
+                    if (BtnEnc.isLongClick())
+                    {
+                        EstadoMenu = false;
+                        submenu4 = false;
+                        menuInicial();
+                        break;
+                    }
+
+                    if (BtnEnc.isSingleClick())
+                    {
+                        EstadoMenu = false;
+                        submenu4 = false;
+                        noteSelect = posicion - 1;
+                        menuInicial();
+                        break;
+                    }
+                }
+                if (posicion == 4)
+                {
+                    display.fillRect(30, 30, 75, 20, BLACK);
+                    display.setTextSize(2);
+                    display.setTextColor(WHITE);
+                    display.setCursor(50, 32);
+                    display.print(noteNames[3]);
+                    display.display();
+
+                    BtnEnc.update();
+
+                    if (BtnEnc.isLongClick())
+                    {
+                        EstadoMenu = false;
+                        submenu4 = false;
+                        menuInicial();
+                        break;
+                    }
+
+                    if (BtnEnc.isSingleClick())
+                    {
+                        EstadoMenu = false;
+                        submenu4 = false;
+                        noteSelect = posicion - 1;
+                        menuInicial();
+                        break;
+                    }
+                }
+                if (posicion == 5)
+                {
+                    display.fillRect(30, 30, 75, 20, BLACK);
+                    display.setTextSize(2);
+                    display.setTextColor(WHITE);
+                    display.setCursor(50, 32);
+                    display.print(noteNames[4]);
+                    display.display();
+
+                    BtnEnc.update();
+
+                    if (BtnEnc.isLongClick())
+                    {
+                        EstadoMenu = false;
+                        submenu4 = false;
+                        menuInicial();
+                        break;
+                    }
+
+                    if (BtnEnc.isSingleClick())
+                    {
+                        EstadoMenu = false;
+                        submenu4 = false;
+                        noteSelect = posicion - 1;
+                        menuInicial();
+                        break;
+                    }
+                }
+                if (posicion == 6)
+                {
+                    display.fillRect(30, 30, 75, 20, BLACK);
+                    display.setTextSize(2);
+                    display.setTextColor(WHITE);
+                    display.setCursor(50, 32);
+                    display.print(noteNames[5]);
+                    display.display();
+
+                    BtnEnc.update();
+
+                    if (BtnEnc.isLongClick())
+                    {
+                        EstadoMenu = false;
+                        submenu4 = false;
+                        menuInicial();
+                        break;
+                    }
+
+                    if (BtnEnc.isSingleClick())
+                    {
+                        EstadoMenu = false;
+                        submenu4 = false;
+                        noteSelect = posicion - 1;
+                        menuInicial();
+                        break;
+                    }
+                }
+                if (posicion == 7)
+                {
+                    display.fillRect(30, 30, 75, 20, BLACK);
+                    display.setTextSize(2);
+                    display.setTextColor(WHITE);
+                    display.setCursor(50, 32);
+                    display.print(noteNames[6]);
+                    display.display();
+
+                    BtnEnc.update();
+
+                    if (BtnEnc.isLongClick())
+                    {
+                        EstadoMenu = false;
+                        submenu4 = false;
+                        menuInicial();
+                        break;
+                    }
+
+                    if (BtnEnc.isSingleClick())
+                    {
+                        EstadoMenu = false;
+                        submenu4 = false;
+                        noteSelect = posicion - 1;
+                        menuInicial();
+                        break;
+                    }
+                }
+                if (posicion == 8)
+                {
+                    display.fillRect(30, 30, 75, 20, BLACK);
+                    display.setTextSize(2);
+                    display.setTextColor(WHITE);
+                    display.setCursor(50, 32);
+                    display.print(noteNames[7]);
+                    display.display();
+
+                    BtnEnc.update();
+
+                    if (BtnEnc.isLongClick())
+                    {
+                        EstadoMenu = false;
+                        submenu4 = false;
+                        menuInicial();
+                        break;
+                    }
+
+                    if (BtnEnc.isSingleClick())
+                    {
+                        EstadoMenu = false;
+                        submenu4 = false;
+                        noteSelect = posicion - 1;
+                        menuInicial();
+                        break;
+                    }
+                }
+                if (posicion == 9)
+                {
+                    display.fillRect(30, 30, 75, 20, BLACK);
+                    display.setTextSize(2);
+                    display.setTextColor(WHITE);
+                    display.setCursor(50, 32);
+                    display.print(noteNames[8]);
+                    display.display();
+
+                    BtnEnc.update();
+
+                    if (BtnEnc.isLongClick())
+                    {
+                        EstadoMenu = false;
+                        submenu4 = false;
+                        menuInicial();
+                        break;
+                    }
+
+                    if (BtnEnc.isSingleClick())
+                    {
+                        EstadoMenu = false;
+                        submenu4 = false;
+                        noteSelect = posicion - 1;
+                        menuInicial();
+                        break;
+                    }
+                }
+                if (posicion == 10)
+                {
+                    display.fillRect(30, 30, 75, 20, BLACK);
+                    display.setTextSize(2);
+                    display.setTextColor(WHITE);
+                    display.setCursor(50, 32);
+                    display.print(noteNames[9]);
+                    display.display();
+
+                    BtnEnc.update();
+
+                    if (BtnEnc.isLongClick())
+                    {
+                        EstadoMenu = false;
+                        submenu4 = false;
+                        menuInicial();
+                        break;
+                    }
+
+                    if (BtnEnc.isSingleClick())
+                    {
+                        EstadoMenu = false;
+                        submenu4 = false;
+                        noteSelect = posicion - 1;
+                        menuInicial();
+                        break;
+                    }
+                }
+                if (posicion == 11)
+                {
+                    display.fillRect(30, 30, 75, 20, BLACK);
+                    display.setTextSize(2);
+                    display.setTextColor(WHITE);
+                    display.setCursor(50, 32);
+                    display.print(noteNames[10]);
+                    display.display();
+
+                    BtnEnc.update();
+
+                    if (BtnEnc.isLongClick())
+                    {
+                        EstadoMenu = false;
+                        submenu4 = false;
+                        menuInicial();
+                        break;
+                    }
+
+                    if (BtnEnc.isSingleClick())
+                    {
+                        EstadoMenu = false;
+                        submenu4 = false;
+                        noteSelect = posicion - 1;
+                        menuInicial();
+                        break;
+                    }
+                }
+                if (posicion == 12)
+                {
+                    display.fillRect(30, 30, 75, 20, BLACK);
+                    display.setTextSize(2);
+                    display.setTextColor(WHITE);
+                    display.setCursor(50, 32);
+                    display.print(noteNames[11]);
+                    display.display();
+
+                    BtnEnc.update();
+
+                    if (BtnEnc.isLongClick())
+                    {
+                        EstadoMenu = false;
+                        submenu4 = false;
+                        menuInicial();
+                        break;
+                    }
+
+                    if (BtnEnc.isSingleClick())
+                    {
+                        EstadoMenu = false;
+                        submenu4 = false;
+                        noteSelect = posicion - 1;
+                        menuInicial();
+                        break;
+                    }
+                }
+            }
         }
+        if (submenu4 == false && EstadoMenu == false)
+        {
+            posicion = 1;
+            break;
+        }
+        ////////////// FIN TONALIDAD /////////
 
-        //posicion 5
+        //posicion 5 MODO
         if (posicion == 5)
         {
             display.drawRoundRect(0, 4, 26, 22, 1, BLACK);
@@ -368,10 +999,109 @@ void MenuConfig()
             display.drawRoundRect(90, 35, 26, 22, 1, BLACK);
             display.display();
 
-            //Serial.println(posicion);
+            BtnEnc.update();
 
-            PosMenu = 5;
+            //Vuelve al menu Ajustes
+            if (BtnEnc.isLongClick())
+            {
+                EstadoMenu = false;
+                submenu5 = false;
+                menuInicial();
+                break;
+            }
+
+            //Entrada selector MODO
+            if (BtnEnc.isSingleClick())
+            {
+                display.clearDisplay();
+                display.setTextSize(1);
+                display.setTextColor(WHITE);
+                display.setCursor(38, 0);
+                display.println("MODO");
+                display.drawLine(2, 8, 124, 8, 1);
+                display.display();
+
+                submenu5 = true;
+                posicion = 1;
+
+                while (submenu5)
+                {
+                    if (posicion >= 3)
+                    {
+                        posicion = 1;
+                    }
+                    if (posicion <= 0)
+                    {
+                        posicion = 2;
+                    }
+
+                    if (posicion == 1)
+                    {
+                        display.fillRect(30, 30, 75, 20, BLACK);
+                        display.setTextSize(2);
+                        display.setTextColor(WHITE);
+                        display.setCursor(50, 32);
+                        display.print(mode[0]);
+                        display.display();
+
+                        BtnEnc.update();
+
+                        //Vuelve al menu Ajustes
+                        if (BtnEnc.isLongClick())
+                        {
+                            EstadoMenu = false;
+                            submenu5 = false;
+                            menuInicial();
+                            break;
+                        }
+
+                        if (BtnEnc.isSingleClick())
+                        {
+                            EstadoMenu = false;
+                            submenu5 = false;
+                            ModeSel = posicion - 1;
+                            menuInicial();
+                            break;
+                        }
+                    }
+                    if (posicion == 2)
+                    {
+                        display.fillRect(30, 30, 75, 20, BLACK);
+                        display.setTextSize(2);
+                        display.setTextColor(WHITE);
+                        display.setCursor(50, 32);
+                        display.print(mode[1]);
+                        display.display();
+
+                        BtnEnc.update();
+
+                        //Vuelve al menu Ajustes
+                        if (BtnEnc.isLongClick())
+                        {
+                            EstadoMenu = false;
+                            submenu5 = false;
+                            menuInicial();
+                            break;
+                        }
+
+                        if (BtnEnc.isSingleClick())
+                        {
+                            EstadoMenu = false;
+                            submenu5 = false;
+                            ModeSel = posicion - 1;
+                            menuInicial();
+                            break;
+                        }
+                    }
+                }
+            }
         }
+        if (submenu5 == false && EstadoMenu == false)
+        {
+            posicion = 1;
+            break;
+        }
+        //////////// FIN MODO //////////////////
 
         //posicion 6
         if (posicion == 6)
