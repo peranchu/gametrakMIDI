@@ -34,7 +34,7 @@ void setup()
   attachInterrupt(digitalPinToInterrupt(DATA), encoder, LOW);
   delay(50);
 
-  usbMIDI.begin();
+  //usbMIDI.begin();
 
   //Hilos
   //Control POT

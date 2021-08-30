@@ -138,13 +138,13 @@ void IR0()
 
                     if (i == 0) //Envía NOTA  Eje Z canal derecho
                     {
-                        noteOut = NOTE + scaleNotes[escalaSelect][IR_val[i] + octave[OctSel]];
-                        usbMIDI.sendNoteOn(noteOut, 127, MIDI_CH);
-                        usbMIDI.send_now();
+                        // noteOut = NOTE + scaleNotes[escalaSelect][IR_val[i] + octave[OctSel]];
+                        // usbMIDI.sendNoteOn(noteOut, 127, MIDI_CH);
+                        // usbMIDI.send_now();
 
-                        noteOut = NOTE + scaleNotes[escalaSelect][IR_Pval[i] + octave[OctSel]]; //Off nota previa
-                        usbMIDI.sendNoteOff(noteOut, 0, MIDI_CH);
-                        usbMIDI.send_now();
+                        // noteOut = NOTE + scaleNotes[escalaSelect][IR_Pval[i] + octave[OctSel]]; //Off nota previa
+                        // usbMIDI.sendNoteOff(noteOut, 0, MIDI_CH);
+                        // usbMIDI.send_now();
 
                         //Debug
                         int noteOut = NOTE + scaleNotes[escalaSelect][IR_val[i]] + octave[OctSel];
@@ -152,10 +152,11 @@ void IR0()
                         Serial.print("IR");
                         Serial.print(i);
                         Serial.print(": ");
-                        Serial.print(reading[i]);
+                        Serial.print(filteredVal[i]);
                         Serial.print(" | ");
                         Serial.print(noteOut);
-                        //Serial.print(scaleNotes[0][0]);
+                        Serial.print(" | ");
+                        Serial.print(scaleNotes[escalaSelect][IR_val[i]]);
                         //Serial.print(a);
                         Serial.println("    ");
                         ////// DEBUG /////////////////////
@@ -164,15 +165,15 @@ void IR0()
                     }
                 }
                 //Lo que este por debajo de los limites del sensor
-                if (filteredVal[i] < IR_entrada_min[i])
+                if (filteredVal[i] > 800)
                 {
                     if (note_is_playing == true)
                     {
                         for (byte i = 0; i < 127; i++)
                         {
-                            usbMIDI.sendNoteOff(i, 0, MIDI_CH);
-                            usbMIDI.send_now();
-                            Serial.println("Apgagado");
+                            // usbMIDI.sendNoteOff(i, 0, MIDI_CH);
+                            // usbMIDI.send_now();
+                            Serial.println("apagado");
                         }
 
                         note_is_playing = false;
