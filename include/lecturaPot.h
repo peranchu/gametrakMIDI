@@ -1,6 +1,8 @@
 #include <Arduino.h>
 #include <Average.h>
 
+#include "Escalado.h"
+
 //////  AVERAGE FILTRADO SEÑALES POTENCIOMETROS //////////////////
 byte averageSize[6] = {10, 10, 10, 10, 10, 10};
 
@@ -19,8 +21,8 @@ Average<int> ave[6] = {
 const byte N_POTS = 6;
 
 /*Asignacion pines Potenciometros
-   A1,A2,A3 = mando derecha ejes z,y,x respectivamente
-   A7,A8,A9 = mando izquierda ejes z,y,x respectivamente
+   A0,A1,A2 = mando derecha ejes z,x,y respectivamente
+   A3,A6,A7 = mando izquierda ejes z,x,y respectivamente
 */
 const byte POT_PIN[N_POTS] = {A0, A1, A2, A3, A6, A7};
 
@@ -50,6 +52,8 @@ unsigned long lastDebounceTime[N_POTS] = {0};
 unsigned long debounceDelay = 20;
 //////////////////////////////////////////////////////////////////
 
+bool note_is_playing = false;
+
 ////////////////////////
 //POTENCIOMETROS
 void readPot(int i)
@@ -59,6 +63,41 @@ void readPot(int i)
 
     filteredVal[i] = ave[i].mean();
     potCState[i] = filteredVal[i];
+
+    //Escalado y curva
+    //fscale( float originalMin, float originalMax, float newBegin, float newEnd, float inputValue, float curve) - linearize curve
+    scaledVal[i] = fscale(IR_entrada_min[i], IR_entrada_max[i], IR_min_val[i], IR_max_val[i], filteredVal[i], IR_curve);
+
+    //clips IR value to mix-max
+    IR_val[i] = clipValue(scaledVal[i], IR_min_val[i], IR_max_val[i]);
+
+    // /////////////////////////////////////
+    // //Debug
+    // for (int i = 0; i < 6; i++)
+    // {
+    //     if (i == 1)
+    //     {
+
+    //         Serial.print(i);
+    //         Serial.print(": Reading: ");
+    //         Serial.print(reading[5]);
+    //         Serial.print(" | ");
+
+    //         Serial.print(": filteredVal: ");
+    //         Serial.print(filteredVal[5]);
+    //         Serial.print(" | ");
+
+    //         Serial.print(": Scaled val: ");
+    //         Serial.print(scaledVal[5]);
+    //         Serial.print(" | ");
+
+    //         Serial.print(": IRval: ");
+    //         Serial.print(IR_val[5]);
+    //         Serial.print(" | ");
+    //     }
+    //     Serial.println();
+    // }
+    // /////////////////// DEBUG //////////////////////
 
     potVar[i] = abs(potCState[i] - potPState[i]); //Valor absoluto
 
@@ -77,23 +116,56 @@ void readPot(int i)
         potMoving[i] = false;
     }
 }
-
-///////////////////////////////////////
+///////////// FIN LECTURA POT //////////////////////////
 
 ///////////// FUNCIONES HILOS  /////////////
 //IR0
 void IR0()
 {
+    //Derecha Z
     int i = 0;
     readPot(i);
 
     if (potMoving[i] == true)
     {
-        Serial.print("Pot: ");
-        Serial.print(i);
-        Serial.print(" ");
-        Serial.println(potCState[i]);
+        if ((millis() - lastDebounceTime[i]) > debounceDelay)
+        {
+            if (IR_val[i] != IR_Pval[i])
+            {
+                if (IR_val[i] >= 0)
+                {
+                    lastDebounceTime[i] = millis();
 
+                    if (i == 0) //Envía NOTA  Eje Z canal derecho
+                    {
+                        noteOut = NOTE + scaleNotes[escalaSelect][IR_val[i] + octave[octaveIndex]];
+                        usbMIDI.sendNoteOn(noteOut, 127, MIDI_CH);
+                        usbMIDI.send_now();
+
+                        noteOut = NOTE + scaleNotes[escalaSelect][IR_Pval[i] + octave[octaveIndex]]; //Off nota previa
+                        usbMIDI.sendNoteOff(noteOut, 0, MIDI_CH);
+                        usbMIDI.send_now();
+
+                        //Debug
+                        int noteOut = NOTE + scaleNotes[escalaSelect][IR_val[i]] + octave[octaveIndex];
+
+                        Serial.print("IR");
+                        Serial.print(i);
+                        Serial.print(": ");
+                        Serial.print(reading[i]);
+                        Serial.print(" | ");
+                        Serial.print(noteOut);
+                        //Serial.print(scaleNotes[0][0]);
+                        //Serial.print(a);
+                        Serial.println("    ");
+                        //////// DEBUG /////////////////////
+
+                        note_is_playing = true;
+                    }
+                }
+            }
+        }
+        IR_Pval[i] = IR_val[i]; //Almacena las lecturas anteriores
         potPState[i] = potCState[i];
     }
 }
@@ -102,15 +174,12 @@ void IR0()
 //IR1
 void IR1()
 {
+    //Derecha x
     int i = 1;
     readPot(i);
 
     if (potMoving[i] == true)
     {
-        Serial.print("Pot: ");
-        Serial.print(i);
-        Serial.print(" ");
-        Serial.println(potCState[i]);
 
         potPState[i] = potCState[i];
     }
@@ -120,15 +189,12 @@ void IR1()
 //IR2
 void IR2()
 {
+    //Derecha y
     int i = 2;
     readPot(i);
 
     if (potMoving[i] == true)
     {
-        Serial.print("Pot: ");
-        Serial.print(i);
-        Serial.print(" ");
-        Serial.println(potCState[i]);
 
         potPState[i] = potCState[i];
     }
@@ -138,15 +204,12 @@ void IR2()
 //IR3
 void IR3()
 {
+    //Izquierda z
     int i = 3;
     readPot(i);
 
     if (potMoving[i] == true)
     {
-        Serial.print("Pot: ");
-        Serial.print(i);
-        Serial.print(" ");
-        Serial.println(potCState[i]);
 
         potPState[i] = potCState[i];
     }
@@ -156,15 +219,12 @@ void IR3()
 //IR4
 void IR4()
 {
+    //Izquierda x
     int i = 4;
     readPot(i);
 
     if (potMoving[i] == true)
     {
-        Serial.print("Pot: ");
-        Serial.print(i);
-        Serial.print(" ");
-        Serial.println(potCState[i]);
 
         potPState[i] = potCState[i];
     }
@@ -174,15 +234,12 @@ void IR4()
 //IR5
 void IR5()
 {
+    //Izqueirda y
     int i = 5;
     readPot(i);
 
     if (potMoving[i] == true)
     {
-        Serial.print("Pot: ");
-        Serial.print(i);
-        Serial.print(" ");
-        Serial.println(potCState[i]);
 
         potPState[i] = potCState[i];
     }

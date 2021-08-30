@@ -1086,6 +1086,17 @@ void MenuConfig()
                             EstadoMenu = false;
                             submenu5 = false;
                             ModeSel = posicion - 1;
+                            //Estado del modo
+                            if (ModeSel == 0)
+                            {
+                                modoScl = true;
+                                modoPb = false;
+                            }
+                            if (ModeSel == 1)
+                            {
+                                modoScl = false;
+                                modoPb = true;
+                            }
                             menuInicial();
                             break;
                         }
@@ -1100,7 +1111,7 @@ void MenuConfig()
         }
         //////////// FIN MODO //////////////////
 
-        //posicion 6
+        //posicion 6  Atrás
         if (posicion == 6)
         {
             display.drawRoundRect(0, 4, 26, 22, 1, BLACK);
@@ -1123,3 +1134,4 @@ void MenuConfig()
         }
     }
 }
+////////////// FIN MENU CONFIG ///////////////

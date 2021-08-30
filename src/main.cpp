@@ -34,6 +34,8 @@ void setup()
   attachInterrupt(digitalPinToInterrupt(DATA), encoder, LOW);
   delay(50);
 
+  usbMIDI.begin();
+
   //Hilos
   //Control POT
   threadIR0.setInterval(20); //Cada cuantos ms
