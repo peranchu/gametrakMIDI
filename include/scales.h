@@ -6,7 +6,6 @@ Mensajes MIDI y MODO
 
 ///////////////////////////
 //ESCALAS
-int octaveIndex = 2;
 byte escalaSelect = 0; //Almacena escala seleccionada
 byte noteSelect = 0;   //Almacena Tonalidad seleccionada
 byte ModeSel = 0;      //Almacena modo seleccionado

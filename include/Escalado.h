@@ -8,8 +8,8 @@ Escalado y clipping de la señal de los potenciometros
 int IR_entrada_min[6] = {200, 0, 0, 200, 0, 0};             //la posición mínima que queremos leer  z, y, x
 int IR_entrada_max[6] = {900, 1023, 1023, 900, 1023, 1023}; //Posicion Máxima del sensor z,y,x
 
-int IR_min_val[6] = {0, 0, 0, 0, 0, 0};            //el valor mínimo de salida
-int IR_max_val[6] = {13, 127, 127, 127, 127, 127}; //valor máximo a la salida
+int IR_min_val[6] = {13, 127, 127, 127, 127, 127}; //el valor mínimo de salida
+int IR_max_val[6] = {0, 0, 0, 0, 0, 0};            //valor máximo a la salida
 
 byte IR_val[6] = {0};  //Valor actual
 byte IR_Pval[6] = {0}; //Valor previo
@@ -23,11 +23,11 @@ int clipValue(int in, int minVal, int maxVal)
 {
     int out;
 
-    if (in > maxVal)
+    if (in < maxVal)
     {
         out = maxVal;
     }
-    else if (in < minVal)
+    else if (in > minVal)
     {
         out = minVal;
     }

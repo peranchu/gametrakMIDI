@@ -80,19 +80,19 @@ void readPot(int i)
 
     //         Serial.print(i);
     //         Serial.print(": Reading: ");
-    //         Serial.print(reading[5]);
+    //         Serial.print(reading[0]);
     //         Serial.print(" | ");
 
     //         Serial.print(": filteredVal: ");
-    //         Serial.print(filteredVal[5]);
+    //         Serial.print(filteredVal[0]);
     //         Serial.print(" | ");
 
     //         Serial.print(": Scaled val: ");
-    //         Serial.print(scaledVal[5]);
+    //         Serial.print(scaledVal[0]);
     //         Serial.print(" | ");
 
     //         Serial.print(": IRval: ");
-    //         Serial.print(IR_val[5]);
+    //         Serial.print(IR_val[0]);
     //         Serial.print(" | ");
     //     }
     //     Serial.println();
@@ -138,16 +138,16 @@ void IR0()
 
                     if (i == 0) //Envía NOTA  Eje Z canal derecho
                     {
-                        noteOut = NOTE + scaleNotes[escalaSelect][IR_val[i] + octave[octaveIndex]];
+                        noteOut = NOTE + scaleNotes[escalaSelect][IR_val[i] + octave[OctSel]];
                         usbMIDI.sendNoteOn(noteOut, 127, MIDI_CH);
                         usbMIDI.send_now();
 
-                        noteOut = NOTE + scaleNotes[escalaSelect][IR_Pval[i] + octave[octaveIndex]]; //Off nota previa
+                        noteOut = NOTE + scaleNotes[escalaSelect][IR_Pval[i] + octave[OctSel]]; //Off nota previa
                         usbMIDI.sendNoteOff(noteOut, 0, MIDI_CH);
                         usbMIDI.send_now();
 
                         //Debug
-                        int noteOut = NOTE + scaleNotes[escalaSelect][IR_val[i]] + octave[octaveIndex];
+                        int noteOut = NOTE + scaleNotes[escalaSelect][IR_val[i]] + octave[OctSel];
 
                         Serial.print("IR");
                         Serial.print(i);
@@ -158,9 +158,24 @@ void IR0()
                         //Serial.print(scaleNotes[0][0]);
                         //Serial.print(a);
                         Serial.println("    ");
-                        //////// DEBUG /////////////////////
+                        ////// DEBUG /////////////////////
 
                         note_is_playing = true;
+                    }
+                }
+                //Lo que este por debajo de los limites del sensor
+                if (filteredVal[i] < IR_entrada_min[i])
+                {
+                    if (note_is_playing == true)
+                    {
+                        for (byte i = 0; i < 127; i++)
+                        {
+                            usbMIDI.sendNoteOff(i, 0, MIDI_CH);
+                            usbMIDI.send_now();
+                            Serial.println("Apgagado");
+                        }
+
+                        note_is_playing = false;
                     }
                 }
             }
