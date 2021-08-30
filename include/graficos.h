@@ -26,9 +26,6 @@ unsigned long tiempo1 = 0;
 const int intervalo = 3000;
 bool EstadoMenu = false;
 
-//Posiciones Menu
-byte PosMenu = 1;
-
 bool submenu1 = false;
 bool submenu2 = false;
 bool submenu3 = false;
@@ -1114,9 +1111,15 @@ void MenuConfig()
             display.drawRoundRect(90, 35, 26, 22, 1, WHITE);
             display.display();
 
-            //Serial.println(posicion);
+            BtnEnc.update();
 
-            PosMenu = 6;
+            //Entrada selector MODO
+            if (BtnEnc.isSingleClick())
+            {
+                posicion = 1;
+                menuInicial();
+                break;
+            }
         }
     }
 }
