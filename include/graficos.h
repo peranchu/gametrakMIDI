@@ -464,7 +464,7 @@ void MenuConfig()
                         {
                             EstadoMenu = false;
                             submenu3 = false;
-                            OctSel = posicion - 1;
+                            OctSel = 0;
                             menuInicial();
                             break;
                         }
@@ -492,7 +492,7 @@ void MenuConfig()
                         {
                             EstadoMenu = false;
                             submenu3 = false;
-                            OctSel = posicion - 1;
+                            OctSel = 1;
                             menuInicial();
                             break;
                         }
@@ -520,7 +520,7 @@ void MenuConfig()
                         {
                             EstadoMenu = false;
                             submenu3 = false;
-                            OctSel = posicion - 1;
+                            OctSel = 2;
                             menuInicial();
                             break;
                         }
@@ -548,7 +548,7 @@ void MenuConfig()
                         {
                             EstadoMenu = false;
                             submenu3 = false;
-                            OctSel = posicion - 1;
+                            OctSel = 3;
                             menuInicial();
                             break;
                         }
@@ -576,7 +576,7 @@ void MenuConfig()
                         {
                             EstadoMenu = false;
                             submenu3 = false;
-                            OctSel = posicion - 1;
+                            OctSel = 4;
                             menuInicial();
                             break;
                         }
@@ -1057,6 +1057,17 @@ void MenuConfig()
                             EstadoMenu = false;
                             submenu5 = false;
                             ModeSel = posicion - 1;
+                            //Estado del modo
+                            if (ModeSel == 0)
+                            {
+                                modoScl = true;
+                                modoPb = false;
+                            }
+                            if (ModeSel == 1)
+                            {
+                                modoScl = false;
+                                modoPb = true;
+                            }
                             menuInicial();
                             break;
                         }
