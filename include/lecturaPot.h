@@ -75,7 +75,7 @@ void readPot(int i)
     scaledVal[i] = fscale(IR_entrada_min[i], IR_entrada_max[i], IR_min_val[i], IR_max_val[i], filteredVal[i], IR_curve);
 
     //PITCHBEND
-    pitchBendVal = fscale(IR_entrada_min[0], IR_entrada_max[0], 16383, 0, filteredVal[i], IR_curve);
+    pitchBendVal = fscale(IR_entrada_min[0], IR_entrada_max[0], 8191, -8192, filteredVal[0], IR_curve);
 
     //clips IR value to mix-max
     IR_val[i] = clipValue(scaledVal[i], IR_min_val[i], IR_max_val[i]);
@@ -206,13 +206,17 @@ void IR0()
                         pitchBendIsPlaying = true;
 
                         //Debug
-                        Serial.print("pitchBend is: ");
-                        Serial.println(pitchBendIsPlaying);
+                        // Serial.print("pitchBend is: ");
+                        // Serial.println(pitchBendIsPlaying);
                         //////////////////////
                     }
 
                     usbMIDI.sendPitchBend(pitchBendVal, MIDI_CH);
                     usbMIDI.send_now();
+
+                    //Debug
+                    // Serial.print("PitchBend is: ");
+                    // Serial.println(pitchBendVal);
                 }
                 if (pitchBendVal < 1) //Apaga las notas
                 {
@@ -228,8 +232,8 @@ void IR0()
                         pitchBendIsPlaying = false;
 
                         //Debug
-                        Serial.print("pichBend is: ");
-                        Serial.println(pitchBendIsPlaying);
+                        // Serial.print("pichBend is: ");
+                        // Serial.println(pitchBendIsPlaying);
                         ///////////////////////
                     }
                 }
@@ -251,6 +255,22 @@ void IR1()
 
     if (potMoving[i] == true)
     {
+        if ((millis() - lastDebounceTime[i]) > debounceDelay)
+        {
+            if (IR_val[i] != IR_Pval[i])
+            {
+                if (IR_val[i] >= 0)
+                {
+                    lastDebounceTime[i] = millis();
+
+                    if (i == 1) //CC 20 eje x canal derecho
+                    {
+                        usbMIDI.sendControlChange(20, IR_val[i], MIDI_CH);
+                        usbMIDI.send_now();
+                    }
+                }
+            }
+        }
 
         potPState[i] = potCState[i];
     }
@@ -266,7 +286,23 @@ void IR2()
 
     if (potMoving[i] == true)
     {
+        if ((millis() - lastDebounceTime[i]) > debounceDelay)
+        {
+            if (IR_val[i] != IR_Pval[i])
+            {
+                if (IR_val[i] >= 0)
+                {
+                    lastDebounceTime[i] = millis();
 
+                    if (i == 2) //CC 21 Eje y canal derecho
+                    {
+                        usbMIDI.sendControlChange(21, IR_val[i], MIDI_CH);
+                        usbMIDI.send_now();
+                    }
+                }
+            }
+        }
+        IR_Pval[i] = IR_val[i];
         potPState[i] = potCState[i];
     }
 }
@@ -312,10 +348,27 @@ void IR4()
 
     if (potMoving[i] == true)
     {
+        if ((millis() - lastDebounceTime[i]) > debounceDelay)
+        {
+            if (IR_val[i] != IR_Pval[i])
+            {
+                if (IR_val[i] >= 0)
+                {
+                    lastDebounceTime[i] = millis();
 
+                    if (i == 4) //CC 22 eje x canal izquierdo
+                    {
+                        usbMIDI.sendControlChange(22, IR_val[i], MIDI_CH);
+                        usbMIDI.send_now();
+                    }
+                }
+            }
+        }
+        IR_Pval[i] = IR_val[i];
         potPState[i] = potCState[i];
     }
 }
+
 /////////////////////////////////
 
 //IR5
@@ -327,7 +380,23 @@ void IR5()
 
     if (potMoving[i] == true)
     {
+        if ((millis() - lastDebounceTime[i]) > debounceDelay)
+        {
+            if (IR_val[i] != IR_Pval[i])
+            {
+                if (IR_val[i] >= 0)
+                {
+                    lastDebounceTime[i] = millis();
 
+                    if (i == 5) //CC 23 eje y canal izquierdo
+                    {
+                        usbMIDI.sendControlChange(23, IR_val[i], MIDI_CH);
+                        usbMIDI.send_now();
+                    }
+                }
+            }
+        }
+        IR_Pval[i] = IR_val[i];
         potPState[i] = potCState[i];
     }
 }
