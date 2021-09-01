@@ -1,7 +1,14 @@
 #include <Arduino.h>
 #include <Average.h>
+#include <FastLED.h>
 
 #include "Escalado.h"
+
+//LED
+#define NUM_LEDS 1
+#define DATA_PIN 8
+
+CRGB leds[NUM_LEDS];
 
 //////  AVERAGE FILTRADO SEÑALES POTENCIOMETROS //////////////////
 byte averageSize[6] = {10, 10, 10, 10, 10, 10};
@@ -119,10 +126,15 @@ void readPot(int i)
     if (timer[i] < TIMEOUT)
     {
         potMoving[i] = true;
+        leds[0] = CRGB::BlueViolet;
+        FastLED.show();
     }
     else
     {
         potMoving[i] = false;
+
+        leds[0] = CRGB::Black;
+        FastLED.show();
     }
 }
 ///////////// FIN LECTURA POT //////////////////////////
@@ -149,11 +161,12 @@ void IR0()
 
                         if (i == 0) //Envía NOTA  Eje Z canal derecho
                         {
-                            noteOut = NOTE + scaleNotes[escalaSelect][IR_val[i]] + octave[OctSel];
+
+                            noteOut = NOTE + scaleNotes[escalaSelect][IR_val[i]] + octave[OctSel] + noteSelect;
                             usbMIDI.sendNoteOn(noteOut, 127, MIDI_CH);
                             usbMIDI.send_now();
 
-                            noteOut = NOTE + scaleNotes[escalaSelect][IR_Pval[i]] + octave[OctSel]; //Off nota previa
+                            noteOut = NOTE + scaleNotes[escalaSelect][IR_Pval[i]] + octave[OctSel] + noteSelect; //Off nota previa
                             usbMIDI.sendNoteOff(noteOut, 0, MIDI_CH);
                             usbMIDI.send_now();
 

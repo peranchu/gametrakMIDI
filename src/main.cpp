@@ -34,6 +34,8 @@ void setup()
   attachInterrupt(digitalPinToInterrupt(DATA), encoder, LOW);
   delay(50);
 
+  FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, NUM_LEDS);
+
   usbMIDI.begin();
 
   //Hilos

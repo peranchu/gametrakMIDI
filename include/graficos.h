@@ -591,7 +591,7 @@ void MenuConfig()
         }
         /////////////////// FIN OCTAVA ///////////////
 
-        //posicion 4
+        //posicion 4 Tonalidad
         if (posicion == 4)
         {
             display.drawRoundRect(0, 4, 26, 22, 1, BLACK);
