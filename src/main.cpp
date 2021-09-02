@@ -76,15 +76,6 @@ void loop()
     MenuConfig();
   }
 
-  if (modoPb == true)
-  {
-    threadIR0.setInterval(2);
-  }
-  else
-  {
-    threadIR0.setInterval(20);
-  }
-
   cpu.run();
 }
 

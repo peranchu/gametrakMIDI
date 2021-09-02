@@ -138,7 +138,7 @@ void MenuConfig()
             posicion = 6;
         }
 
-        if (posicion == 1)
+        if (posicion == 1) //Escalas
         {
             display.drawRoundRect(0, 4, 26, 22, 1, WHITE);
             display.drawRoundRect(0, 35, 26, 22, 1, BLACK);
@@ -178,13 +178,13 @@ void MenuConfig()
                 while (submenu1)
                 {
                     //Ajuste de los valores del cursor
-                    if (posicion >= 5)
+                    if (posicion >= 10)
                     {
                         posicion = 1;
                     }
                     if (posicion <= 0)
                     {
-                        posicion = 4;
+                        posicion = 9;
                     }
                     ////////////////////////////
 
@@ -274,11 +274,151 @@ void MenuConfig()
                     }
                     if (posicion == 4)
                     {
-                        display.fillRect(30, 22, 90, 20, BLACK);
+                        display.fillRect(30, 22, 120, 20, BLACK);
                         display.setTextSize(2);
                         display.setTextColor(BLACK, WHITE);
                         display.setCursor(30, 22);
                         display.print(scaleNames[3]);
+                        display.display();
+
+                        BtnEnc.update();
+                        //Vuelve al menu principal
+                        if (BtnEnc.isLongClick())
+                        {
+                            submenu1 = false;
+                            EstadoMenu = false;
+                            menuInicial();
+                            break;
+                        }
+                        //Escoje la escala
+                        if (BtnEnc.isSingleClick())
+                        {
+                            submenu1 = false;
+                            EstadoMenu = false;
+                            escalaSelect = posicion - 1;
+                            menuInicial();
+                            break;
+                        }
+                    }
+                    if (posicion == 5)
+                    {
+                        display.fillRect(30, 22, 120, 20, BLACK);
+                        display.setTextSize(2);
+                        display.setTextColor(BLACK, WHITE);
+                        display.setCursor(30, 22);
+                        display.print(scaleNames[4]);
+                        display.display();
+
+                        BtnEnc.update();
+                        //Vuelve al menu principal
+                        if (BtnEnc.isLongClick())
+                        {
+                            submenu1 = false;
+                            EstadoMenu = false;
+                            menuInicial();
+                            break;
+                        }
+                        //Escoje la escala
+                        if (BtnEnc.isSingleClick())
+                        {
+                            submenu1 = false;
+                            EstadoMenu = false;
+                            escalaSelect = posicion - 1;
+                            menuInicial();
+                            break;
+                        }
+                    }
+                    if (posicion == 6)
+                    {
+                        display.fillRect(30, 22, 120, 20, BLACK);
+                        display.setTextSize(2);
+                        display.setTextColor(BLACK, WHITE);
+                        display.setCursor(30, 22);
+                        display.print(scaleNames[5]);
+                        display.display();
+
+                        BtnEnc.update();
+                        //Vuelve al menu principal
+                        if (BtnEnc.isLongClick())
+                        {
+                            submenu1 = false;
+                            EstadoMenu = false;
+                            menuInicial();
+                            break;
+                        }
+                        //Escoje la escala
+                        if (BtnEnc.isSingleClick())
+                        {
+                            submenu1 = false;
+                            EstadoMenu = false;
+                            escalaSelect = posicion - 1;
+                            menuInicial();
+                            break;
+                        }
+                    }
+                    if (posicion == 7)
+                    {
+                        display.fillRect(30, 22, 120, 20, BLACK);
+                        display.setTextSize(2);
+                        display.setTextColor(BLACK, WHITE);
+                        display.setCursor(30, 22);
+                        display.print(scaleNames[6]);
+                        display.display();
+
+                        BtnEnc.update();
+                        //Vuelve al menu principal
+                        if (BtnEnc.isLongClick())
+                        {
+                            submenu1 = false;
+                            EstadoMenu = false;
+                            menuInicial();
+                            break;
+                        }
+                        //Escoje la escala
+                        if (BtnEnc.isSingleClick())
+                        {
+                            submenu1 = false;
+                            EstadoMenu = false;
+                            escalaSelect = posicion - 1;
+                            menuInicial();
+                            break;
+                        }
+                    }
+                    if (posicion == 8)
+                    {
+                        display.fillRect(30, 22, 120, 20, BLACK);
+                        display.setTextSize(2);
+                        display.setTextColor(BLACK, WHITE);
+                        display.setCursor(30, 22);
+                        display.print(scaleNames[7]);
+                        display.display();
+
+                        BtnEnc.update();
+                        //Vuelve al menu principal
+                        if (BtnEnc.isLongClick())
+                        {
+                            submenu1 = false;
+                            EstadoMenu = false;
+                            menuInicial();
+                            break;
+                        }
+                        //Escoje la escala
+                        if (BtnEnc.isSingleClick())
+                        {
+                            submenu1 = false;
+                            EstadoMenu = false;
+                            escalaSelect = posicion - 1;
+                            menuInicial();
+                            break;
+                        }
+                    }
+                    if (posicion == 9)
+                    {
+                        display.fillRect(30, 22, 120, 20, BLACK);
+                        display.setTextSize(2);
+                        display.setTextColor(BLACK, WHITE);
+                        display.setCursor(30, 22);
+                        display.print(scaleNames[8]);
                         display.display();
 
                         BtnEnc.update();
