@@ -32,6 +32,9 @@ bool submenu3 = false;
 bool submenu4 = false;
 bool submenu5 = false;
 
+//Cambios de control CC MIDI
+const char *POT_CC_N[6] = {"Z: Note", "X: Pb", "Y: 1", "Z: 11", "X: 21", "Y: 22"};
+
 //Prototipo
 void EntradaMenuConfig();
 void MenuConfig();
@@ -138,7 +141,7 @@ void MenuConfig()
             posicion = 6;
         }
 
-        if (posicion == 1) //Escalas
+        if (posicion == 1)
         {
             display.drawRoundRect(0, 4, 26, 22, 1, WHITE);
             display.drawRoundRect(0, 35, 26, 22, 1, BLACK);
@@ -167,7 +170,7 @@ void MenuConfig()
                 display.clearDisplay();
                 display.setTextSize(1);
                 display.setTextColor(WHITE);
-                display.setCursor(38, 0);
+                display.setCursor(44, 0);
                 display.println("Escalas");
                 display.drawLine(2, 8, 124, 8, 1);
                 display.display();
@@ -191,10 +194,10 @@ void MenuConfig()
                     //Pintar Escalas en pantalla
                     if (posicion == 1)
                     {
-                        display.fillRect(30, 22, 120, 40, BLACK);
+                        display.fillRect(10, 22, 120, 40, BLACK);
                         display.setTextSize(2);
                         display.setTextColor(BLACK, WHITE);
-                        display.setCursor(30, 22);
+                        display.setCursor(24, 22);
                         display.print(scaleNames[0]);
                         display.display();
 
@@ -219,10 +222,10 @@ void MenuConfig()
                     }
                     if (posicion == 2)
                     {
-                        display.fillRect(30, 22, 90, 20, BLACK);
+                        display.fillRect(10, 22, 90, 20, BLACK);
                         display.setTextSize(2);
                         display.setTextColor(BLACK, WHITE);
-                        display.setCursor(30, 22);
+                        display.setCursor(24, 22);
                         display.print(scaleNames[1]);
                         display.display();
 
@@ -247,10 +250,10 @@ void MenuConfig()
                     }
                     if (posicion == 3)
                     {
-                        display.fillRect(30, 22, 90, 20, BLACK);
+                        display.fillRect(10, 22, 90, 20, BLACK);
                         display.setTextSize(2);
                         display.setTextColor(BLACK, WHITE);
-                        display.setCursor(30, 22);
+                        display.setCursor(24, 22);
                         display.print(scaleNames[2]);
                         display.display();
 
@@ -274,10 +277,10 @@ void MenuConfig()
                     }
                     if (posicion == 4)
                     {
-                        display.fillRect(30, 22, 120, 20, BLACK);
+                        display.fillRect(10, 22, 120, 20, BLACK);
                         display.setTextSize(2);
                         display.setTextColor(BLACK, WHITE);
-                        display.setCursor(30, 22);
+                        display.setCursor(24, 22);
                         display.print(scaleNames[3]);
                         display.display();
 
@@ -302,10 +305,10 @@ void MenuConfig()
                     }
                     if (posicion == 5)
                     {
-                        display.fillRect(30, 22, 120, 20, BLACK);
+                        display.fillRect(10, 22, 120, 20, BLACK);
                         display.setTextSize(2);
                         display.setTextColor(BLACK, WHITE);
-                        display.setCursor(30, 22);
+                        display.setCursor(24, 22);
                         display.print(scaleNames[4]);
                         display.display();
 
@@ -330,10 +333,10 @@ void MenuConfig()
                     }
                     if (posicion == 6)
                     {
-                        display.fillRect(30, 22, 120, 20, BLACK);
+                        display.fillRect(10, 22, 120, 20, BLACK);
                         display.setTextSize(2);
                         display.setTextColor(BLACK, WHITE);
-                        display.setCursor(30, 22);
+                        display.setCursor(24, 22);
                         display.print(scaleNames[5]);
                         display.display();
 
@@ -358,10 +361,10 @@ void MenuConfig()
                     }
                     if (posicion == 7)
                     {
-                        display.fillRect(30, 22, 120, 20, BLACK);
+                        display.fillRect(10, 22, 120, 20, BLACK);
                         display.setTextSize(2);
                         display.setTextColor(BLACK, WHITE);
-                        display.setCursor(30, 22);
+                        display.setCursor(24, 22);
                         display.print(scaleNames[6]);
                         display.display();
 
@@ -386,10 +389,10 @@ void MenuConfig()
                     }
                     if (posicion == 8)
                     {
-                        display.fillRect(30, 22, 120, 20, BLACK);
+                        display.fillRect(10, 22, 120, 20, BLACK);
                         display.setTextSize(2);
                         display.setTextColor(BLACK, WHITE);
-                        display.setCursor(30, 22);
+                        display.setCursor(24, 22);
                         display.print(scaleNames[7]);
                         display.display();
 
@@ -414,10 +417,10 @@ void MenuConfig()
                     }
                     if (posicion == 9)
                     {
-                        display.fillRect(30, 22, 120, 20, BLACK);
+                        display.fillRect(10, 22, 120, 20, BLACK);
                         display.setTextSize(2);
                         display.setTextColor(BLACK, WHITE);
-                        display.setCursor(30, 22);
+                        display.setCursor(24, 22);
                         display.print(scaleNames[8]);
                         display.display();
 
@@ -1125,7 +1128,7 @@ void MenuConfig()
         }
         ////////////// FIN TONALIDAD /////////
 
-        //posicion 5 MODO
+        //posicion 5 CC
         if (posicion == 5)
         {
             display.drawRoundRect(0, 4, 26, 22, 1, BLACK);
@@ -1153,9 +1156,8 @@ void MenuConfig()
                 display.clearDisplay();
                 display.setTextSize(1);
                 display.setTextColor(WHITE);
-                display.setCursor(38, 0);
-                display.println("MODO");
-                display.drawLine(2, 8, 124, 8, 1);
+                display.setCursor(58, 0);
+                display.println("CC");
                 display.display();
 
                 submenu5 = true;
@@ -1163,94 +1165,37 @@ void MenuConfig()
 
                 while (submenu5)
                 {
-                    if (posicion >= 3)
+
+                    display.fillRect(30, 30, 75, 20, BLACK);
+                    display.setTextSize(1);
+                    display.setTextColor(WHITE);
+                    display.drawBitmap(5, 0, manoIzq, 20, 20, 1);
+                    display.drawBitmap(100, 0, mano, 20, 20, 1);
+                    display.setCursor(80, 24);
+                    display.print(POT_CC_N[0]);
+                    display.setCursor(80, 38);
+                    display.print(POT_CC_N[1]);
+                    display.setCursor(80, 54);
+                    display.print(POT_CC_N[2]);
+
+                    display.setCursor(5, 24);
+                    display.print(POT_CC_N[3]);
+                    display.setCursor(5, 38);
+                    display.print(POT_CC_N[4]);
+                    display.setCursor(5, 54);
+                    display.print(POT_CC_N[5]);
+
+                    display.display();
+
+                    BtnEnc.update();
+
+                    //Vuelve al menu Ajustes
+                    if (BtnEnc.isLongClick())
                     {
-                        posicion = 1;
-                    }
-                    if (posicion <= 0)
-                    {
-                        posicion = 2;
-                    }
-
-                    if (posicion == 1)
-                    {
-                        display.fillRect(30, 30, 75, 20, BLACK);
-                        display.setTextSize(2);
-                        display.setTextColor(WHITE);
-                        display.setCursor(50, 32);
-                        display.print(mode[0]);
-                        display.display();
-
-                        BtnEnc.update();
-
-                        //Vuelve al menu Ajustes
-                        if (BtnEnc.isLongClick())
-                        {
-                            EstadoMenu = false;
-                            submenu5 = false;
-                            menuInicial();
-                            break;
-                        }
-
-                        if (BtnEnc.isSingleClick())
-                        {
-                            EstadoMenu = false;
-                            submenu5 = false;
-                            ModeSel = posicion - 1;
-                            //Estado del modo
-                            if (ModeSel == 0)
-                            {
-                                modoScl = true;
-                                modoPb = false;
-                            }
-                            if (ModeSel == 1)
-                            {
-                                modoScl = false;
-                                modoPb = true;
-                            }
-                            menuInicial();
-                            break;
-                        }
-                    }
-                    if (posicion == 2)
-                    {
-                        display.fillRect(30, 30, 75, 20, BLACK);
-                        display.setTextSize(2);
-                        display.setTextColor(WHITE);
-                        display.setCursor(50, 32);
-                        display.print(mode[1]);
-                        display.display();
-
-                        BtnEnc.update();
-
-                        //Vuelve al menu Ajustes
-                        if (BtnEnc.isLongClick())
-                        {
-                            EstadoMenu = false;
-                            submenu5 = false;
-                            menuInicial();
-                            break;
-                        }
-
-                        if (BtnEnc.isSingleClick())
-                        {
-                            EstadoMenu = false;
-                            submenu5 = false;
-                            ModeSel = posicion - 1;
-                            //Estado del modo
-                            if (ModeSel == 0)
-                            {
-                                modoScl = true;
-                                modoPb = false;
-                            }
-                            if (ModeSel == 1)
-                            {
-                                modoScl = false;
-                                modoPb = true;
-                            }
-                            menuInicial();
-                            break;
-                        }
+                        EstadoMenu = false;
+                        submenu5 = false;
+                        menuInicial();
+                        break;
                     }
                 }
             }

@@ -33,9 +33,6 @@ const byte N_POTS = 6;
 */
 const byte POT_PIN[N_POTS] = {A0, A1, A2, A3, A6, A7};
 
-//Cambios de control CC MIDI
-int POT_CC_N[N_POTS] = {20, 21, 22, 23, 24, 25};
-
 //Almacenan estado Actual, previo y variación de los potenciometros
 int potCState[N_POTS] = {0}; //Estado Actual POT
 int potPState[N_POTS] = {0}; //Estado previo POT
