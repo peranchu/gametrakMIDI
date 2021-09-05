@@ -42,10 +42,10 @@ const char *noteNames[] = {
     "C", "C#", "D", "Eb", "E", "F", "F#", "G", "G#", "A", "Bb", "B"}; //pantalla
 
 //Modo
-const char *mode[] = {"Scl", "Pb"}; //pantalla
+const char *mode[] = {"Scl", "CC"}; //pantalla
 
 bool modoScl = true;
-bool modoPb = false;
+bool modoCC = false;
 
 ////////////////////////////////////////////////////////
 

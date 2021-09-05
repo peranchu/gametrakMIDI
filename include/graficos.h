@@ -31,6 +31,7 @@ bool submenu2 = false;
 bool submenu3 = false;
 bool submenu4 = false;
 bool submenu5 = false;
+bool submenu6 = false;
 
 //Cambios de control CC MIDI
 const char *POT_CC_N[6] = {"Z: Note", "X: Pb", "Y: 1", "Z: 11", "X: 21", "Y: 22"};
@@ -1205,7 +1206,7 @@ void MenuConfig()
             posicion = 1;
             break;
         }
-        //////////// FIN MODO //////////////////
+        //////////// FIN CC //////////////////
 
         //posicion 6  Atrás
         if (posicion == 6)
@@ -1220,12 +1221,101 @@ void MenuConfig()
 
             BtnEnc.update();
 
+            //Vuelve al menu Ajustes
+            if (BtnEnc.isLongClick())
+            {
+                EstadoMenu = false;
+                submenu6 = false;
+                menuInicial();
+                break;
+            }
+
             //Entrada selector MODO
             if (BtnEnc.isSingleClick())
             {
-                posicion = 1;
-                menuInicial();
-                break;
+                display.clearDisplay();
+                display.setTextSize(1);
+                display.setTextColor(WHITE);
+                display.setCursor(50, 0);
+                display.println("MODO");
+                display.drawLine(2, 8, 124, 8, 1);
+                display.display();
+
+                submenu6 = true;
+            }
+            while (submenu6)
+            {
+                if (posicion >= 3)
+                {
+                    posicion = 1;
+                }
+                if (posicion <= 0)
+                {
+                    posicion = 2;
+                }
+
+                if (posicion == 1)
+                {
+                    display.fillRect(10, 22, 120, 40, BLACK);
+                    display.setTextSize(2);
+                    display.setTextColor(WHITE);
+                    display.setCursor(54, 22);
+                    display.print(mode[0]);
+                    display.display();
+
+                    BtnEnc.update();
+                    //Vuelve al menu principal
+                    if (BtnEnc.isLongClick())
+                    {
+                        submenu6 = false;
+                        EstadoMenu = false;
+                        menuInicial();
+                        break;
+                    }
+
+                    //Escoje el Modo Scale
+                    if (BtnEnc.isSingleClick())
+                    {
+                        submenu6 = false;
+                        EstadoMenu = false;
+                        ModeSel = posicion - 1;
+                        modoScl = true;
+                        modoCC = false;
+                        menuInicial();
+                        break;
+                    }
+                }
+                if (posicion == 2)
+                {
+                    display.fillRect(10, 22, 120, 40, BLACK);
+                    display.setTextSize(2);
+                    display.setTextColor(WHITE);
+                    display.setCursor(54, 22);
+                    display.print(mode[1]);
+                    display.display();
+
+                    BtnEnc.update();
+                    //Vuelve al menu principal
+                    if (BtnEnc.isLongClick())
+                    {
+                        submenu6 = false;
+                        EstadoMenu = false;
+                        menuInicial();
+                        break;
+                    }
+
+                    //Escoje el Modo Scale
+                    if (BtnEnc.isSingleClick())
+                    {
+                        submenu6 = false;
+                        EstadoMenu = false;
+                        ModeSel = posicion - 1;
+                        modoScl = false;
+                        modoCC = true;
+                        menuInicial();
+                        break;
+                    }
+                }
             }
         }
     }

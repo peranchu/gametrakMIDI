@@ -148,53 +148,71 @@ void IR0()
     {
         if ((millis() - lastDebounceTime[i]) > debounceDelay)
         {
-
-            if (IR_val[i] != IR_Pval[i])
+            if (modoCC == false) //Si está en modo scale
             {
-                if (IR_val[i] >= 0)
+                if (IR_val[i] != IR_Pval[i])
                 {
-                    lastDebounceTime[i] = millis();
+                    if (IR_val[i] >= 0)
+                    {
+                        lastDebounceTime[i] = millis();
 
-                    //Envía NOTA Eje Z canal derecho
-                    noteOut = NOTE + scaleNotes[escalaSelect][IR_val[i]] + octave[OctSel] + noteSelect;
-                    usbMIDI.sendNoteOn(noteOut, 127, MIDI_CH);
-                    usbMIDI.send_now();
+                        //Envía NOTA Eje Z canal derecho
+                        noteOut = NOTE + scaleNotes[escalaSelect][IR_val[i]] + octave[OctSel] + noteSelect;
+                        usbMIDI.sendNoteOn(noteOut, 127, MIDI_CH);
+                        usbMIDI.send_now();
 
-                    noteOut = NOTE + scaleNotes[escalaSelect][IR_Pval[i]] + octave[OctSel] + noteSelect; //Off nota previa
-                    usbMIDI.sendNoteOff(noteOut, 0, MIDI_CH);
-                    usbMIDI.send_now();
+                        noteOut = NOTE + scaleNotes[escalaSelect][IR_Pval[i]] + octave[OctSel] + noteSelect; //Off nota previa
+                        usbMIDI.sendNoteOff(noteOut, 0, MIDI_CH);
+                        usbMIDI.send_now();
 
-                    //Debug
-                    // int noteOut = NOTE + scaleNotes[escalaSelect][IR_val[i]] + octave[OctSel];
+                        //Debug
+                        // int noteOut = NOTE + scaleNotes[escalaSelect][IR_val[i]] + octave[OctSel];
 
-                    // Serial.print("IR");
-                    // Serial.print(i);
-                    // Serial.print(": ");
-                    // Serial.print(filteredVal[i]);
-                    // Serial.print(" | ");
-                    // Serial.print(noteOut);
-                    // Serial.print(" | ");
-                    // Serial.print(scaleNotes[escalaSelect][IR_val[i]]);
-                    // //Serial.print(a);
-                    // Serial.println("    ");
-                    ////// DEBUG /////////////////////
+                        // Serial.print("IR");
+                        // Serial.print(i);
+                        // Serial.print(": ");
+                        // Serial.print(filteredVal[i]);
+                        // Serial.print(" | ");
+                        // Serial.print(noteOut);
+                        // Serial.print(" | ");
+                        // Serial.print(scaleNotes[escalaSelect][IR_val[i]]);
+                        // //Serial.print(a);
+                        // Serial.println("    ");
+                        ////// DEBUG /////////////////////
 
-                    note_is_playing = true;
+                        note_is_playing = true;
+                    }
+                }
+                //Lo que este por debajo de los limites del sensor
+                if (filteredVal[i] > IR_entrada_max[0])
+                {
+                    if (note_is_playing == true)
+                    {
+                        for (byte i = 0; i < 127; i++) //Apaga todas las notas que quedasen sonando
+                        {
+                            usbMIDI.sendNoteOff(i, 0, MIDI_CH);
+                            usbMIDI.send_now();
+                            Serial.println("apagado");
+                        }
+
+                        note_is_playing = false;
+                    }
                 }
             }
-            //Lo que este por debajo de los limites del sensor
-            if (filteredVal[i] > IR_entrada_max[0])
+            else //Si está en Modo CC
             {
-                if (note_is_playing == true)
+                if (IR_val[i] != IR_Pval[i])
                 {
-                    for (byte i = 0; i < 127; i++) //Apaga todas las notas que quedasen sonando
+                    if (IR_val[i] >= 0)
                     {
-                        usbMIDI.sendNoteOff(i, 0, MIDI_CH);
-                        usbMIDI.send_now();
-                        Serial.println("apagado");
-                    }
+                        lastDebounceTime[i] = millis();
 
-                    note_is_playing = false;
+                        if (i == 0) //CC 20 Eje y, canal derecho
+                        {
+                            usbMIDI.sendControlChange(20, IR_val[i], MIDI_CH);
+                            usbMIDI.send_now();
+                        }
+                    }
                 }
             }
         }
@@ -215,16 +233,35 @@ void IR1()
     {
         if ((millis() - lastDebounceTime[i]) > debounceDelay)
         {
-
-            if (pitchBendPVal != pitchBendVal)
+            if (modoScl == true) //Si está en modo scale
             {
+                if (pitchBendPVal != pitchBendVal)
+                {
 
-                usbMIDI.sendPitchBend(pitchBendVal, MIDI_CH);
-                usbMIDI.send_now();
+                    usbMIDI.sendPitchBend(pitchBendVal, MIDI_CH);
+                    usbMIDI.send_now();
+                }
             }
+            else //Si está en MODO CC
+            {
+                if (IR_val[i] != IR_Pval[i])
+                {
+                    if (IR_val[i] >= 0)
+                    {
+                        lastDebounceTime[i] = millis();
+
+                        if (i == 1) //CC 26 Eje x, canal derecho
+                        {
+                            usbMIDI.sendControlChange(26, IR_val[i], MIDI_CH);
+                            usbMIDI.send_now();
+                        }
+                    }
+                }
+            }
+            potPState[i] = potCState[i];
+            pitchBendPVal = pitchBendVal;
+            IR_Pval[i] = IR_val[i]; //Almacena las lecturas anteriores
         }
-        potPState[i] = potCState[i];
-        pitchBendPVal = pitchBendVal;
     }
 }
 /////////////////////////////
